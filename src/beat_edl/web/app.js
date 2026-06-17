@@ -3,8 +3,6 @@
 const $ = (id) => document.getElementById(id);
 
 let audioPath = null;
-let wavesurfer = null;
-let lastResult = null;
 
 function setStatus(text, isError = false) {
   const el = $("status");
@@ -27,41 +25,6 @@ function gatherParams() {
   };
 }
 
-function initWavesurfer() {
-  if (wavesurfer) wavesurfer.destroy();
-  wavesurfer = WaveSurfer.create({
-    container: "#waveform",
-    waveColor: "#5b6072",
-    progressColor: "#5b8def",
-    height: 110,
-    cursorColor: "#f8f8f2",
-  });
-}
-
-// Draw beat markers as thin vertical overlays over the waveform.
-function drawBeats(result) {
-  const container = $("waveform");
-  container.querySelectorAll(".beat-line").forEach((n) => n.remove());
-  const duration = wavesurfer ? wavesurfer.getDuration() : 0;
-  if (!duration) return;
-
-  const downbeatSet = new Set(result.downbeats.map((t) => t.toFixed(3)));
-  for (const t of result.beats) {
-    const isDown = downbeatSet.has(t.toFixed(3));
-    const line = document.createElement("div");
-    line.className = "beat-line";
-    line.style.position = "absolute";
-    line.style.top = "8px";
-    line.style.bottom = "8px";
-    line.style.width = isDown ? "2px" : "1px";
-    line.style.background = isDown ? "#ff6b6b" : "rgba(248,248,242,0.45)";
-    line.style.left = `${(t / duration) * 100}%`;
-    line.style.pointerEvents = "none";
-    container.appendChild(line);
-  }
-  container.style.position = "relative";
-}
-
 async function pickFile() {
   const path = await window.pywebview.api.open_audio_dialog();
   if (!path) return;
@@ -69,9 +32,6 @@ async function pickFile() {
   $("file-name").textContent = path.split(/[\\/]/).pop();
   $("analyze").disabled = false;
   $("export").disabled = true;
-  initWavesurfer();
-  // pywebview can serve a local file via the file:// protocol.
-  wavesurfer.load("file://" + path);
   setStatus("");
 }
 
@@ -85,8 +45,6 @@ async function analyze() {
     setStatus("エラー: " + res.error, true);
     return;
   }
-  lastResult = res;
-  drawBeats(res);
   setStatus(
     `${res.backend} | ${res.tempo} BPM | ビート ${res.beats.length} / 小節頭 ${res.downbeats.length}`
   );
