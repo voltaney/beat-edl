@@ -1,0 +1,35 @@
+name: build-windows
+
+# Build the Windows onedir app with PyInstaller. PyInstaller cannot
+# cross-compile, so this runs on a Windows runner.
+
+on:
+  push:
+    branches: ["claude/**", "main"]
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Sync dependencies
+        run: uv sync
+
+      - name: Run tests
+        run: uv run pytest -q
+
+      - name: Build app
+        run: uv run pyinstaller packaging/beat-edl.spec --noconfirm
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: beat-edl-windows
+          path: dist/beat-edl/
+          if-no-files-found: error

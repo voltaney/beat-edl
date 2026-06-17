@@ -26,19 +26,21 @@ tests/              # timecode / edl のユニットテスト
 
 検出と出力は GUI から切り離されており、`core.py` を CLI・テスト・GUI のいずれからも同じように駆動できます。
 
-## インストール
+## セットアップ（uv 管理）
+
+このプロジェクトは [uv](https://docs.astral.sh/uv/) で管理します。
 
 ```bash
-pip install -e .            # librosa バックエンド + GUI
+uv sync                     # 依存（dev含む）をインストール
 ```
 
 ### 任意: madmom（高精度ダウンビート）
 
-リリース版 madmom は Python 3.10+ でビルド/インポートに失敗するため、互換ビルドを git から入れます:
+リリース版 madmom は Python 3.10+ でビルド/インポートに失敗するため、互換ビルドを git から入れます（uv の lock には載せず手動導入）:
 
 ```bash
-pip install -e ".[madmom]"
-pip install --no-build-isolation "git+https://github.com/CPJKU/madmom.git"
+uv pip install cython "numpy<2" mido
+uv pip install --no-build-isolation "git+https://github.com/CPJKU/madmom.git"
 ```
 
 > madmom バックエンドの音声読み込みは librosa 経由で行うため、ffmpeg は不要です。
@@ -48,7 +50,7 @@ pip install --no-build-isolation "git+https://github.com/CPJKU/madmom.git"
 ### GUI
 
 ```bash
-beat-edl            # または: python -m beat_edl
+uv run beat-edl            # または: uv run python -m beat_edl
 ```
 
 オーディオを選択 → 拍子・fps などを設定 → 「解析」で波形上にビート/小節頭を表示 → 「EDL書き出し」。
@@ -56,17 +58,29 @@ beat-edl            # または: python -m beat_edl
 ### CLI
 
 ```bash
-beat-edl-cli song.wav -o song.edl --fps 24 --beats-per-bar 4
-beat-edl-cli song.wav --backend madmom --downbeats-only
+uv run beat-edl-cli song.wav -o song.edl --fps 24 --beats-per-bar 4
+uv run beat-edl-cli song.wav --backend madmom --downbeats-only
 ```
 
 ## Resolve への取り込み
 
 書き出した `.edl` を Resolve のメディアプール/タイムラインへインポートするとマーカーが復元されます。マーカーの記録タイムコードはタイムライン開始TC（既定 `01:00:00:00`）を基準にオフセットされるので、Resolve 既定のタイムラインにそのまま合います。
 
+## Windows exe ビルド（PyInstaller, onedir）
+
+PyInstaller はクロスコンパイルできないため、Windows 上でビルドします。
+
+```powershell
+pwsh packaging/build.ps1        # dist/beat-edl/beat-edl.exe を生成
+```
+
+CI（`.github/workflows/build-windows.yml`, Windows runner）でも push/タグ時に自動ビルドし、アーティファクト `beat-edl-windows` を出力します。
+
 ## 開発
 
 ```bash
-pip install -e ".[dev]"
-PYTHONPATH=src pytest -q
+uv sync
+uv run pytest -q
 ```
+
+詳細仕様は [`docs/spec.md`](docs/spec.md)、開発規約は [`CLAUDE.md`](CLAUDE.md) を参照。
