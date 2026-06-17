@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>beat-edl</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/wavesurfer.js@7"></script>
+</head>
+<body>
+  <header>
+    <h1>beat-edl</h1>
+    <span id="backend-badge" class="badge">—</span>
+  </header>
+
+  <section class="file-row">
+    <button id="pick-file">オーディオを選択…</button>
+    <span id="file-name" class="muted">ファイル未選択</span>
+  </section>
+
+  <section id="waveform" class="waveform"></section>
+
+  <section class="controls">
+    <label>検出バックエンド
+      <select id="backend"></select>
+    </label>
+    <label>拍子（1小節の拍数）
+      <input id="beats-per-bar" type="number" min="1" max="12" value="4" />
+    </label>
+    <label>フレームレート (fps)
+      <select id="fps">
+        <option>23.976</option><option selected>24</option><option>25</option>
+        <option>29.97</option><option>30</option><option>50</option>
+        <option>59.94</option><option>60</option>
+      </select>
+    </label>
+    <label>テンポ手動指定 (BPM, 0=自動)
+      <input id="tempo-hint" type="number" min="0" max="300" value="0" />
+    </label>
+    <label>Nビートごと
+      <input id="beat-interval" type="number" min="1" max="16" value="1" />
+    </label>
+    <label>タイムライン開始TC
+      <input id="timeline-start" type="text" value="01:00:00:00" />
+    </label>
+    <label>ビート色
+      <select id="color"></select>
+    </label>
+    <label>小節頭の色
+      <select id="downbeat-color"></select>
+    </label>
+    <label class="check"><input id="mark-downbeats" type="checkbox" checked /> 小節頭を色分け</label>
+    <label class="check"><input id="downbeats-only" type="checkbox" /> 小節頭のみ出力</label>
+  </section>
+
+  <section class="actions">
+    <button id="analyze" disabled>解析</button>
+    <button id="export" disabled>EDL書き出し</button>
+    <span id="status" class="muted"></span>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>

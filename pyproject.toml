@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "beat-edl"
+version = "0.1.0"
+description = "Generate DaVinci Resolve EDL markers from an audio file's beats"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+
+# Core dependencies. The librosa backend (always-on default) and the pywebview
+# GUI shell. madmom is optional -- see the [project.optional-dependencies].
+dependencies = [
+    "librosa>=0.10",
+    "soundfile>=0.12",
+    "pywebview>=5.0",
+    "numpy>=1.22",
+]
+
+[project.optional-dependencies]
+# True downbeat tracking. The released madmom does not build on Python 3.10+,
+# so install a compatible build from git:
+#   pip install "beat-edl[madmom]"  is NOT enough on its own; you also need
+#   pip install --no-build-isolation "git+https://github.com/CPJKU/madmom.git"
+madmom = ["cython", "numpy<2", "mido"]
+dev = ["pytest>=7"]
+
+[project.scripts]
+beat-edl = "beat_edl.__main__:main"
+beat-edl-cli = "beat_edl.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+# Ship the web UI alongside the package when installed.
+"*" = ["web/*"]
