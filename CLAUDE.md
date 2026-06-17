@@ -43,12 +43,24 @@ uv pip install --no-build-isolation "git+https://github.com/CPJKU/madmom.git"
   アーティファクトを出力。
 - **Linux 環境では Windows exe はビルド不可**（PyInstaller はクロスコンパイル不可）。
 
+## ブランチ運用（GitHub Flow）
+
+- デフォルトブランチは `main`。常にビルド可能・リリース可能な状態を保つ。
+- 機能・修正は `main` から短命ブランチを切って作業する。
+- ブランチ名は **コミット型のプレフィックス** に合わせ、`<type>/<短い説明>`（説明は英語 kebab-case）:
+  - `feat/` 新機能, `fix/` バグ修正, `docs/` ドキュメント,
+    `build/` ビルド/依存/パッケージング, `refactor/`, `test/`, `perf/`, `chore/`
+  - 例: `feat/madmom-progress`, `fix/edl-timeline-offset`, `docs/branching-policy`
+- `main` への反映は **原則 Pull Request 経由**（レビュー/CI の記録を残す）。
+  タイポ等の軽微な修正は `main` へ直接コミット可。
+- リリースは SemVer タグ `vX.Y.Z`。タグ push で Windows exe が CI ビルドされる。
+
 ## コミット規約
 
 - **粒度: 論理単位で自律的にコミットする**。「uv化」「docs追加」「pyinstaller設定」のような
   意味のあるまとまりごとに 1 コミット。1 コミットに無関係な変更を混ぜない。
-- 作業ブランチは指定されたフィーチャーブランチを使う（既定ブランチへ直接 push しない）。
 - コミットメッセージは命令形の要約 + 必要なら本文で「なぜ」を説明。
+  要約はブランチ型と同じ接頭辞（`feat:` / `fix:` / `docs:` / `build:` …）を付ける。
 - PR はユーザーから明示的に依頼があるまで作らない。
 
 ## アーキテクチャの要点
