@@ -3,17 +3,28 @@
 from __future__ import annotations
 
 import os
+import sys
 
 import webview
 
 from .api import Api
 
-_WEB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "web")
+
+def _web_dir() -> str:
+    """Locate the bundled web UI across editable, installed and frozen runs.
+
+    - PyInstaller: data is unpacked under ``sys._MEIPASS``.
+    - Normal install / editable: the ``web`` folder ships inside the package.
+    """
+    if getattr(sys, "frozen", False):
+        base = getattr(sys, "_MEIPASS", os.path.dirname(sys.executable))
+        return os.path.join(base, "beat_edl", "web")
+    return os.path.join(os.path.dirname(__file__), "web")
 
 
 def main() -> None:
     api = Api()
-    index = os.path.join(_WEB_DIR, "index.html")
+    index = os.path.join(_web_dir(), "index.html")
     webview.create_window(
         "beat-edl",
         url=index,

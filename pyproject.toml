@@ -7,11 +7,13 @@ name = "beat-edl"
 version = "0.1.0"
 description = "Generate DaVinci Resolve EDL markers from an audio file's beats"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = { text = "MIT" }
 
-# Core dependencies. The librosa backend (always-on default) and the pywebview
-# GUI shell. madmom is optional -- see the [project.optional-dependencies].
+# Runtime dependencies. The librosa backend (always-on default) plus the
+# pywebview GUI shell. madmom is intentionally NOT listed here: it needs a git
+# build with --no-build-isolation and does not belong in the lockfile. See
+# docs/spec.md and CLAUDE.md for the optional madmom install.
 dependencies = [
     "librosa>=0.10",
     "soundfile>=0.12",
@@ -19,13 +21,12 @@ dependencies = [
     "numpy>=1.22",
 ]
 
-[project.optional-dependencies]
-# True downbeat tracking. The released madmom does not build on Python 3.10+,
-# so install a compatible build from git:
-#   pip install "beat-edl[madmom]"  is NOT enough on its own; you also need
-#   pip install --no-build-isolation "git+https://github.com/CPJKU/madmom.git"
-madmom = ["cython", "numpy<2", "mido"]
-dev = ["pytest>=7"]
+[dependency-groups]
+# Managed by uv (`uv sync` installs these by default).
+dev = [
+    "pytest>=7",
+    "pyinstaller>=6",
+]
 
 [project.scripts]
 beat-edl = "beat_edl.__main__:main"
@@ -35,5 +36,10 @@ beat-edl-cli = "beat_edl.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-# Ship the web UI alongside the package when installed.
-"*" = ["web/*"]
+# The web UI ships inside the package so installed/frozen builds can find it.
+"beat_edl" = ["web/*"]
+
+[tool.uv]
+# Keep the resolver from trying to build the project against an isolated env
+# that lacks our pinned build deps is unnecessary here; defaults are fine.
+package = true

@@ -6,5 +6,7 @@ dist/
 .venv/
 venv/
 .pytest_cache/
+*.spec.bak
+
 *.edl
 !tests/**/*.edl
