@@ -3,7 +3,7 @@
 オーディオファイルのビートを解析し、DaVinci Resolve で読み込める **EDL マーカーファイル**を書き出すデスクトップアプリです。
 
 - **ビート検出**: 既定は [librosa](https://librosa.org/)（追加依存が軽い）。小節頭（ダウンビート）はオンセット強度から位相推定します。任意で [madmom](https://github.com/CPJKU/madmom) を入れると、RNN+DBN による高精度なダウンビート/拍子トラッキングが使えます。
-- **GUI**: [pywebview](https://pywebview.flowrl.com/) による軽量シェル（OS標準WebViewを使用＝Tauri相当の軽さ）。波形＋ビートマーカーを `wavesurfer.js` で表示します。
+- **GUI**: [pywebview](https://pywebview.flowrl.com/) による軽量シェル（OS標準WebViewを使用＝Tauri相当の軽さ）。
 - **出力**: CMX3600 EDL。各ビートをマーカーとして書き出し（`|C:` 色 / `|M:` 名前 / `|D:` 長さ）。小節頭は色分け可能。
 
 ## アーキテクチャ
@@ -53,7 +53,7 @@ uv pip install --no-build-isolation "git+https://github.com/CPJKU/madmom.git"
 uv run beat-edl            # または: uv run python -m beat_edl
 ```
 
-オーディオを選択 → 拍子・fps などを設定 → 「解析」で波形上にビート/小節頭を表示 → 「EDL書き出し」。
+オーディオを選択 → 拍子・fps などを設定 → 「解析」でテンポ/ビート数を確認 → 「EDL書き出し」。
 
 ### CLI
 
