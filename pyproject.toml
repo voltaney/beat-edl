@@ -43,3 +43,16 @@ where = ["src"]
 # Keep the resolver from trying to build the project against an isolated env
 # that lacks our pinned build deps is unnecessary here; defaults are fine.
 package = true
+
+[tool.semantic_release]
+# Automated versioning from Conventional Commits (see release.yml).
+# The version literal is kept in sync in both files so the frozen exe reports
+# the right __version__.
+version_toml = ["pyproject.toml:project.version"]
+version_variables = ["src/beat_edl/__init__.py:__version__"]
+# The exe is built in a separate CI job, so no build step here.
+build_command = ""
+commit_message = "chore(release): v{version}"
+
+[tool.semantic_release.branches.main]
+match = "main"

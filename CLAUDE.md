@@ -53,7 +53,13 @@ uv pip install --no-build-isolation "git+https://github.com/CPJKU/madmom.git"
   - 例: `feat/madmom-progress`, `fix/edl-timeline-offset`, `docs/branching-policy`
 - `main` への反映は **原則 Pull Request 経由**（レビュー/CI の記録を残す）。
   タイポ等の軽微な修正は `main` へ直接コミット可。
-- リリースは SemVer タグ `vX.Y.Z`。タグ push で Windows exe が CI ビルドされる。
+- リリースは **完全自動**（`.github/workflows/release.yml`）。`main` への push を契機に
+  python-semantic-release がコミット履歴から版を決定し、バージョン更新・CHANGELOG・
+  タグ `vX.Y.Z`・GitHub Release・Windows exe 添付まで行う。
+  - `feat:` → minor, `fix:` → patch, `feat!:`/`BREAKING CHANGE` → major。
+    `docs/build/chore/refactor/test/perf` はリリースを発生させない。
+  - 手動の単発 exe ビルドは build-windows（`workflow_dispatch`）。
+  - PR では ci.yml が pytest を実行（Linux・高速）。
 
 ## コミット規約
 
