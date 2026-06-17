@@ -9,11 +9,6 @@ description = "Generate DaVinci Resolve EDL markers from an audio file's beats"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-
-# Runtime dependencies. The librosa backend (always-on default) plus the
-# pywebview GUI shell. madmom is intentionally NOT listed here: it needs a git
-# build with --no-build-isolation and does not belong in the lockfile. See
-# docs/spec.md and CLAUDE.md for the optional madmom install.
 dependencies = [
     "librosa>=0.10",
     "soundfile>=0.12",
@@ -21,16 +16,17 @@ dependencies = [
     "numpy>=1.22",
 ]
 
+[project.scripts]
+beat-edl = "beat_edl.__main__:main"
+beat-edl-cli = "beat_edl.cli:main"
+
+
 [dependency-groups]
 # Managed by uv (`uv sync` installs these by default).
 dev = [
     "pytest>=7",
     "pyinstaller>=6",
 ]
-
-[project.scripts]
-beat-edl = "beat_edl.__main__:main"
-beat-edl-cli = "beat_edl.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
