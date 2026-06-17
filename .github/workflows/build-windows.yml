@@ -1,12 +1,10 @@
 name: build-windows
 
-# Build the Windows onedir app with PyInstaller. PyInstaller cannot
-# cross-compile, so this runs on a Windows runner.
+# Build the Windows onedir app with PyInstaller on demand. PyInstaller cannot
+# cross-compile, so this runs on a Windows runner. Release builds are produced
+# automatically by release.yml; this workflow is for ad-hoc manual builds.
 
 on:
-  push:
-    branches: ["claude/**", "main"]
-    tags: ["v*"]
   workflow_dispatch:
 
 jobs:
